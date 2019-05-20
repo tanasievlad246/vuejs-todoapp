@@ -1,0 +1,31 @@
+Description:
+Create a web application that lets users manage to-do tasks.
+
+Mandatory requirements:
+    1. Ability to add, edit and delete a task.
+    2. Display all tasks.  completed
+    3. Each task will have two states: active & completed.
+    4. Ability to mark a task as completed. Set the task’s font as strikethrough.
+
+Optional requirements (presents an advantage):
+Ability to reorder the tasks.
+Add text search
+Description for each task.
+Support for grouping tasks in folders/projects.
+Ability to add new tasks to existing folders/projects.
+Ability to move an existing task from one folder/project to another.
+Add task priorities (low, medium & high). Tasks with high priority should always be displayed first and are not reorderable.
+
+For storing tasks, choose from one of the following: 
+MySql, MongoDB, Local Storage, JSON file, CSV file.
+
+You can use any language you want, however, our recommendations are:
+NodeJS, PHP, Javascript (any JS Framework like React/Angular/Vue or VanillaJS), Java.
+
+Submission:
+Submit your project via email to cariere@caphyon.ro. Email subject must be Full Stack Web Development Internship Test. Attach the project as an archive to the email or upload it to a public github repository. 
+Don't forget to export and attach you database!
+
+Things not to do:
+Don’t get the code from another public application and present it as yours :) 
+Don’t make a desktop application, this is a Web Development Internship.
