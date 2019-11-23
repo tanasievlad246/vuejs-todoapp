@@ -1,7 +1,7 @@
 A small todo app project 
 
-run npm start in the client folder
-run npm start in the server folder
+run npm start && npm start in the client folder
+run npm start && npm start in the server folder
 
 
 This app uses mongo atlas as a database
