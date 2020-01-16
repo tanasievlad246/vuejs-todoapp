@@ -14,11 +14,11 @@
                 placeholder='Add or edit a todo'
                 v-model='newTodo'
                 class="form-control"/>
-          <textarea placeholder='Add or edit a description' 
+          <textarea placeholder='Add or edit a description'
                     v-model='newDescription'
                     class="form-control">
           </textarea>
-          
+
           <input type='submit' class="btn btn-success btn-block mt-2" value="+" id="plusBtn"/>
         </div>
       </form>
@@ -26,35 +26,35 @@
       <div class="alert alert-danger text-center" role="alert" id="alert" style="display: none">
         You need to add a title!
       </div>
-      
-      <ul style="list-style-type: none;"> 
+
+      <ul style="list-style-type: none;">
         <li v-for='todo in filterTodo' :key='todo._id' class='border border-dark rounded mt-3 text-center'>
-          <button @click="deleteTodo(todo._id)" 
+          <button @click="deleteTodo(todo._id)"
                   class="close" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
-          
+
           <div :style='todo.state === "complete" ?  "text-decoration: line-through;"  : "text-decoration: none;"' class='mt-1 lead text-break'>
             <strong>{{todo.title}}</strong>
           </div>
-          
+
           <div :style='todo.state === "complete" ?  "text-decoration: line-through;"  : "text-decoration: none;"' class='lead text-break'>
             {{todo.description}}
           </div>
-          
+
           <div class='lead'>
             {{todo.state}}
           </div>
-          
-          <button @click="updateTodo(todo._id)" 
+
+          <button @click="updateTodo(todo._id)"
                   class="btn btn-primary mt-1 mb-1">Edit</button>
-          
-          <button v-if='todo.state === "active"' 
-                  class="btn btn-success mt-1 mb-1" 
+
+          <button v-if='todo.state === "active"'
+                  class="btn btn-success mt-1 mb-1"
                   @click='changeState(todo._id, todo.state)'>Complete</button>
-          
-          <button v-else-if="todo.state === 'complete'" 
-                  class="btn btn-dark mt-1 mb-1" 
+
+          <button v-else-if="todo.state === 'complete'"
+                  class="btn btn-dark mt-1 mb-1"
                   @click='changeState(todo._id, todo.state)'>Activate</button>
         </li>
       </ul>
@@ -95,9 +95,9 @@ export default {
       this.todos = response.data
     },
     deleteTodo (todoID) {
-        ToDoAPI.deleteTodo(todoID)
-        // remove the array element with matching id
-        this.todos = this.todos.filter (function(obj) {
+      ToDoAPI.deleteTodo(todoID)
+      // remove the array element with matching id
+      this.todos = this.todos.filter(function (obj) {
         return obj._id !== todoID
       })
     },
