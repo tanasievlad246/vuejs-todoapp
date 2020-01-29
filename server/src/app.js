@@ -3,7 +3,18 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const morgan = require("morgan");
+const mongoose = require("mongoose");
+const mongo = require('mongodb');
 
+var mongoDB = 'mongodb://127.0.0.1/todo_app';
+mongoose.connect(mongoDB, { useNewUrlParser: true });
+//Get the default connection
+var db = mongoose.connection;
+
+//Bind connection to error event (to get notification of connection errors)
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
+/*
 //mongodb connection for atlas
 const mongo = require('mongodb');
 const MongoClient = mongo.MongoClient;
@@ -19,7 +30,7 @@ mongoClient.connect((err, db) => {
     }
     client = db;
 })
-
+*/
 const app = express();
 
 app.use(morgan('dev'));
@@ -30,7 +41,7 @@ app.use(cors());
 //the routes
 //get the todos to display (READ)
 app.get("/todo", (req, res) => {
-    const collection = client.db('todoapp').collection("todos"); //connecting to the atlas collection
+    const collection = db.collection('todos'); //connecting to the atlas collection
 
     collection.find().toArray(function (err, results){ //filtering the results
         if(err){
@@ -44,7 +55,7 @@ app.get("/todo", (req, res) => {
 })
 //add a todo (CREATE)
 app.post('/addTodo', (req, res) => {
-    const collection = client.db('todoapp').collection('todos')
+    const collection = db.collection('todos')
     let todo = req.body.todo //parse the data from the request body
     let description = req.body.description
     let state = req.body.state
@@ -61,21 +72,22 @@ app.post('/addTodo', (req, res) => {
 
 //delete a todo (DELETE)
 app.post('/deleteTodo', (req, res) => {
-    const collection = client.db('todoapp').collection('todos');
+    const collection = db.collection('todos');
     // remove the document by the unique id
-    collection.removeOne({'_id': mongo.ObjectID(req.body.todoID)}, function(err, results){
+    collection.deleteOne({'_id': mongo.ObjectId(req.body.todoID)}, function(err, results){
         if(err) {
             console.log(err)
             res.send('')
             return
         }
         res.send()
+        console.log(req.body.todoID)
     })
 })
 
 //update a todo (UPDATE)
 app.post('/updateTodo', (req, res) => {
-    const collection = client.db('todoapp').collection('todos');
+    const collection = db.collection('todos');
     let todo = req.body.todo;
     let description = req.body.description;
     let state = req.body.state;
@@ -85,7 +97,7 @@ app.post('/updateTodo', (req, res) => {
     if(description) updateOperation.description = description;
     if(state) updateOperation.state = state;
 
-    collection.update({'_id': mongo.ObjectID(req.body.todoID)}, {$set: {...updateOperation}}, function(err, results){
+    collection.update({'_id': mongo.ObjectId(req.body.todoID)}, {$set: {...updateOperation}}, function(err, results){
         if(err) {
             console.log(err)
             res.send('')
@@ -96,7 +108,7 @@ app.post('/updateTodo', (req, res) => {
 })
 //change the state from active to complete
 app.post('/changeState', (req, res) => {
-    const collection = client.db('todoapp').collection('todos');
+    const collection = db.collection('todos');
     let state = req.body.state;
 
     if(state === 'active'){
@@ -125,3 +137,4 @@ app.post('/changeState', (req, res) => {
 
 //the server
 app.listen(process.env.PORT || 8081) // client is already running on 8080
+console.log("App is running on localhost:8081")
