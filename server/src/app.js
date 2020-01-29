@@ -31,6 +31,8 @@ mongoClient.connect((err, db) => {
     client = db;
 })
 */
+
+
 const app = express();
 
 app.use(morgan('dev'));
@@ -133,6 +135,40 @@ app.post('/changeState', (req, res) => {
 
 })
 
+
+//project schema
+const schema = mongoose.Schema({
+    projTitle: String,
+    todos: [
+        {
+            title: String,
+            description: String,
+            state: String,
+            priority: Number,
+        }
+    ]
+});
+
+const Project = mongoose.model('Project', schema);
+
+//add a project
+app.post('/addProject', (req, res) => {
+    const collection = db.collection('projects')
+    const proj = new Project({title: req.body.projTitle});
+    collection.insertOne(proj, function(err, results) {
+        if (err){
+            console.log(err);
+            res.send('');
+            return
+        }
+        res.send(results.ops[0]) //retruns the new document
+    })
+})
+
+//add a todo to a project
+app.post('/addProject/:id', (req, res) => {
+    //TODO -> Add a new todo to a project
+})
 
 
 //the server
