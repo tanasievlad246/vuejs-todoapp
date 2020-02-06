@@ -7,7 +7,7 @@ const mongoose = require("mongoose");
 const mongo = require('mongodb');
 
 var mongoDB = 'mongodb://127.0.0.1/todo_app';
-mongoose.connect(mongoDB, { useNewUrlParser: true });
+mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 //Get the default connection
 var db = mongoose.connection;
 
@@ -136,29 +136,46 @@ app.post('/changeState', (req, res) => {
 })
 
 
+//get projects route
+app.get('/getProjects', (req,res)=>{
+    const collection = db.collection('projects'); //connecting to the atlas collection
+
+    collection.find().toArray(function (err, results){ //filtering the results
+        if(err){
+            console.log(err)
+            res.send([])
+            return
+        }
+
+        res.send(results)
+    })
+})
+
+//ToDo schema
+const todoSchema = mongoose.Schema({
+    title: String,
+    description: String,
+    state: String,
+    priority: Number
+})
+
 //project schema
 const schema = mongoose.Schema({
-    projTitle: String,
-    todos: [
-        {
-            title: String,
-            description: String,
-            state: String,
-            priority: Number,
-        }
-    ]
+    title: String,
+    todos: [{type: mongoose.Types.ObjectId, ref: 'Todo'}]
 });
 
+const Todo = mongoose.model('Todo', schema);
 const Project = mongoose.model('Project', schema);
 
 //add a project
 app.post('/addProject', (req, res) => {
     const collection = db.collection('projects')
-    const proj = new Project({title: req.body.projTitle});
+    const proj = new Project({title: req.body.title});
     collection.insertOne(proj, function(err, results) {
         if (err){
             console.log(err);
-            res.send('');
+            res.send('Error');
             return
         }
         res.send(results.ops[0]) //retruns the new document
@@ -166,11 +183,31 @@ app.post('/addProject', (req, res) => {
 })
 
 //add a todo to a project
-app.post('/addProject/:id', (req, res) => {
-    //TODO -> Add a new todo to a project
-})
+app.post('/addTodoProject/:id', (req,res) => {
+    const collection = db.collection('projects')
+    collection.updateOne({_id: mongo.ObjectID(req.params.id)},{
+        $push: {
+            todos: {
+                title: req.body.title,
+                description: req.body.description,
+                state: req.body.state,
+                priority: req.body.priority
+            }
+        }
+    },function(err, results) {
+        if (err){
+            console.log(err);
+            res.send('Error');
+            return
+        }
+        res.send() //retruns the new document
+    });
+});
+
+
 
 
 //the server
 app.listen(process.env.PORT || 8081) // client is already running on 8080
 console.log("App is running on localhost:8081")
+
