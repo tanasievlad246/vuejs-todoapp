@@ -1,6 +1,13 @@
 import API from '@/services/API'
 
 export default {
+
+  /***************************
+   *
+   * Start of projects request functions
+   *
+   ***************************/
+
   getToDos () {
     return API().get('todo') // connecting to the api
   },
@@ -28,5 +35,15 @@ export default {
       todoID: todoID,
       state: state
     })
+  },
+
+  /***************************
+   *
+   * Start of projects request functions
+   *
+   ***************************/
+  getProjects () {
+    return API().get('getProjects') // connecting to the api
   }
+  
 }

@@ -34,13 +34,17 @@ mongoClient.connect((err, db) => {
 
 
 const app = express();
-
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(cors());
 
+/************************************************************
+ * 
+ * Starting point of the routes to add individual todos to the
+ * todos page
+ * 
+ *************************************************************/
 
-//the routes
 //get the todos to display (READ)
 app.get("/todo", (req, res) => {
     const collection = db.collection('todos'); //connecting to the atlas collection
@@ -54,7 +58,8 @@ app.get("/todo", (req, res) => {
 
         res.send(results)
     })
-})
+});
+
 //add a todo (CREATE)
 app.post('/addTodo', (req, res) => {
     const collection = db.collection('todos')
@@ -69,7 +74,7 @@ app.post('/addTodo', (req, res) => {
         }
         res.send(results.ops[0]) //retruns the new document
     })
-})
+});
 
 
 //delete a todo (DELETE)
@@ -79,13 +84,13 @@ app.post('/deleteTodo', (req, res) => {
     collection.deleteOne({'_id': mongo.ObjectId(req.body.todoID)}, function(err, results){
         if(err) {
             console.log(err)
-            res.send('')
+            res.send()
             return
         }
         res.send()
         console.log(req.body.todoID)
     })
-})
+});
 
 //update a todo (UPDATE)
 app.post('/updateTodo', (req, res) => {
@@ -107,7 +112,8 @@ app.post('/updateTodo', (req, res) => {
         }
         res.send()
     }) 
-})
+});
+
 //change the state from active to complete
 app.post('/changeState', (req, res) => {
     const collection = db.collection('todos');
@@ -133,8 +139,17 @@ app.post('/changeState', (req, res) => {
         })
     }
 
-})
+});
 
+/**********************************************
+ * 
+ * Starting point of the projects routes used to add projects documents with todos as
+ * subdocuments
+ * 
+ * Things needed to improve :
+ *  -> Make the id of the projects autoincrement and make mongo give an id to the todos
+ * 
+ **********************************************/
 
 //get projects route
 app.get('/getProjects', (req,res)=>{
@@ -151,21 +166,12 @@ app.get('/getProjects', (req,res)=>{
     })
 })
 
-//ToDo schema
-const todoSchema = mongoose.Schema({
-    title: String,
-    description: String,
-    state: String,
-    priority: Number
-})
-
 //project schema
 const schema = mongoose.Schema({
     title: String,
-    todos: [{type: mongoose.Types.ObjectId, ref: 'Todo'}]
+    todos: []
 });
 
-const Todo = mongoose.model('Todo', schema);
 const Project = mongoose.model('Project', schema);
 
 //add a project
@@ -190,7 +196,6 @@ app.post('/addTodoProject/:id', (req,res) => {
             todos: {
                 title: req.body.title,
                 description: req.body.description,
-                state: req.body.state,
                 priority: req.body.priority
             }
         }
@@ -200,11 +205,23 @@ app.post('/addTodoProject/:id', (req,res) => {
             res.send('Error');
             return
         }
-        res.send() //retruns the new document
+        res.send()
     });
 });
 
-
+//delete a project
+app.delete('/deleteProject/:id', (req,res)=>{
+    const collection = db.collection('projects');
+    // remove the document by the unique id
+    collection.deleteOne({'_id': mongo.ObjectId(req.params.id)}, function(err, results){
+        if(err) {
+            console.log(err)
+            res.send('')
+            return
+        }
+        res.send()
+    });
+});
 
 
 //the server
