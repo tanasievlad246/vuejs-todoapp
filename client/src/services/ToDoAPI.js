@@ -45,5 +45,4 @@ export default {
   getProjects () {
     return API().get('getProjects') // connecting to the api
   }
-  
 }

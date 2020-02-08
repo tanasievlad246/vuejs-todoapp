@@ -77,7 +77,6 @@ export default {
   },
   mounted () {
     this.loadTodos()
-    console.log(this.todos)
   },
   methods: {
     async addTodo (evt) {

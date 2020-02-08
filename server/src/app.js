@@ -172,7 +172,17 @@ const schema = mongoose.Schema({
     todos: []
 });
 
+//todo schema
+const todo_schema = mongoose.Schema({
+    id: {type: String, index: true}, //mongoose id for subdocuments
+    title: String,
+    description: String,
+    priority: Number,
+    state: String
+});
+
 const Project = mongoose.model('Project', schema);
+const Todo = mongoose.model('Todo', todo_schema);
 
 //add a project
 app.post('/addProject', (req, res) => {
@@ -190,14 +200,11 @@ app.post('/addProject', (req, res) => {
 
 //add a todo to a project
 app.post('/addTodoProject/:id', (req,res) => {
-    const collection = db.collection('projects')
+    const collection = db.collection('projects');
+    const todo = new Todo({title: req.body.title, description: req.body.description, priority: req.body.priority})
     collection.updateOne({_id: mongo.ObjectID(req.params.id)},{
         $push: {
-            todos: {
-                title: req.body.title,
-                description: req.body.description,
-                priority: req.body.priority
-            }
+            todos: todo
         }
     },function(err, results) {
         if (err){
@@ -205,9 +212,12 @@ app.post('/addTodoProject/:id', (req,res) => {
             res.send('Error');
             return
         }
-        res.send()
+        res.send(results)
     });
 });
+
+//TODO -> update state and todo in subdocuments routes
+//TODO -> delete todo in subdocuments route
 
 //delete a project
 app.delete('/deleteProject/:id', (req,res)=>{
@@ -219,7 +229,7 @@ app.delete('/deleteProject/:id', (req,res)=>{
             res.send('')
             return
         }
-        res.send()
+        res.send(results)
     });
 });
 
