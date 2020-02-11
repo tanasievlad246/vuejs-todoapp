@@ -217,6 +217,27 @@ app.post('/addTodoProject/:id', (req,res) => {
 });
 
 //TODO -> update state and todo in subdocuments routes
+
+//route to update a todo inside a project
+app.put('/updateTodoInProject/:id/:todo_id', (req,res)=>{ //':id' represents the id of the project in which the todo is
+    const collection = db.collection('projects');
+    const todo = new Todo({title: req.body.title, description: req.body.description, priority: req.body.priority});
+    collection.updateOne({_id: mongo.ObjectID(req.params.id),
+        todos: {$elemMatch: {_id: mongo.ObjectID(req.params.todo_id)}}
+    },{
+        $set: {
+            "todos.$": todo
+        }
+    },function(err, results) {
+        if (err){
+            console.log(err);
+            res.send('');
+            return
+        }
+        res.send(results)
+    });
+});
+
 //TODO -> delete todo in subdocuments route
 
 //delete a project
