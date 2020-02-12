@@ -221,24 +221,39 @@ app.post('/addTodoProject/:id', (req,res) => {
 //route to update a todo inside a project
 app.put('/updateTodoInProject/:id/:todo_id', (req,res)=>{ //':id' represents the id of the project in which the todo is
     const collection = db.collection('projects');
-    const todo = new Todo({title: req.body.title, description: req.body.description, priority: req.body.priority});
+    const todo = {_id: mongo.ObjectID(req.params.todo_id), title: req.body.title, description: req.body.description, priority: req.body.priority};
+
     collection.updateOne({_id: mongo.ObjectID(req.params.id),
         todos: {$elemMatch: {_id: mongo.ObjectID(req.params.todo_id)}}
     },{
         $set: {
             "todos.$": todo
         }
-    },function(err, results) {
+    },{upsert: false, multi: true},function(err, results) {
         if (err){
             console.log(err);
-            res.send('');
+            res.send('Err');
             return
         }
         res.send(results)
     });
 });
 
-//TODO -> delete todo in subdocuments route
+//TODO -> delete todo in project route
+app.post('/deleteTodoInProject/:id/:todo_id', (req,res)=>{ //':id' represents the id of the project in which the todo is
+    const collection = db.collection('projects');
+
+    collection.updateOne({_id: mongo.ObjectID(req.params.id)},{
+        $pull: {todos: {_id: mongo.ObjectID(req.params.todo_id)}}
+    },function(err, results) {
+        if (err){
+            console.log(err);
+            res.send('Err');
+            return
+        }
+        res.send(results)
+    });   
+});
 
 //delete a project
 app.delete('/deleteProject/:id', (req,res)=>{
