@@ -1,10 +1,10 @@
 <template lang="html">
     <div>
       <!-- temporary toggle button -->
-      <button>Add Project</button>
-
+      <button v-if='this.attr === true' @click='toggleProjectModal("block")'>Add Project</button>
+      <button v-else-if='this.attr === false' @click='toggleProjectModal("none")'>Add Project</button>
       <!-- Start of the submit form -->
-      <form v-on:submit='addProject($event)' class="add-project-modal">
+      <form v-on:submit='addProject($event)' class="add-project-modal" id="project-modal">
         <div class="form-group mt-3 submit-project">
           <input type='text'
                 placeholder='Add a project title'
@@ -44,7 +44,8 @@ export default {
       todoTitle: '',
       todoDescription: '',
       todoPriority: '',
-      todoState: 'active'
+      todoState: 'active',
+      attr: true //attribut to toggle the add project modal
     }
   },
   mounted(){
@@ -65,6 +66,16 @@ export default {
         alert('You need to add a title.')
       }
     },
+    toggleProjectModal(attr){
+      const project = document.getElementById('project-modal');
+      if (attr == 'block') {
+        project.style.display = 'block'
+        this.attr = false;
+      }else if(attr == 'none') {
+        project.style.display = 'none'
+        this.attr = true
+      };
+    }
   }
 }
 </script>
