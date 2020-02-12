@@ -240,11 +240,11 @@ app.put('/updateTodoInProject/:id/:todo_id', (req,res)=>{ //':id' represents the
 });
 
 //TODO -> delete todo in project route
-app.post('/deleteTodoInProject/:id/:todo_id', (req,res)=>{ //':id' represents the id of the project in which the todo is
+app.post('/deleteTodoInProject/:id', (req,res)=>{ //':id' represents the id of the project in which the todo is
     const collection = db.collection('projects');
 
     collection.updateOne({_id: mongo.ObjectID(req.params.id)},{
-        $pull: {todos: {_id: mongo.ObjectID(req.params.todo_id)}}
+        $pull: {todos: {_id: mongo.ObjectID(req.body._id)}}
     },function(err, results) {
         if (err){
             console.log(err);

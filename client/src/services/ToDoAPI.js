@@ -43,6 +43,11 @@ export default {
    *
    ***************************/
   getProjects () {
-    return API().get('getProjects') // connecting to the api
+    return API().get('getProjects') // getting the projects from db
+  },
+  addProject (title) {
+    return API().post('addProject', {
+      title: title
+    });
   }
 }
