@@ -48,6 +48,14 @@ export default {
   addProject (title) {
     return API().post('addProject', {
       title: title
-    });
+    })
+  },
+  addTodoInProject (title,description,state,priority,url) {
+    return API().post(`/addTodoProject/${url}`, {
+      title: title,
+      description: description,
+      state: state,
+      priority: priority
+    })
   }
 }

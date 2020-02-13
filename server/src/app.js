@@ -201,7 +201,7 @@ app.post('/addProject', (req, res) => {
 //add a todo to a project
 app.post('/addTodoProject/:id', (req,res) => {
     const collection = db.collection('projects');
-    const todo = new Todo({title: req.body.title, description: req.body.description, priority: req.body.priority})
+    const todo = new Todo({title: req.body.title, description: req.body.description, priority: req.body.priority, state: req.body.state})
     collection.updateOne({_id: mongo.ObjectID(req.params.id)},{
         $push: {
             todos: todo
