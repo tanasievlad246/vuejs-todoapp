@@ -57,5 +57,10 @@ export default {
       state: state,
       priority: priority
     })
+  },
+  deleteTodoInProject(todoId,projectId){
+    return API().post(`/deleteTodoInProject/${projectId}`,{
+      _id: todoId
+    })
   }
 }

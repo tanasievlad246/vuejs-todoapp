@@ -18,7 +18,7 @@
       <!-- End of the submit form for projects-->
 
       <!-- Start of the submit form for todos-->
-      <form v-on:submit='addTodoInProject()'>
+      <form class="add-todo-modal" v-on:submit='addTodo($event, todoTitle, todoDescription, todoState, todoPriority, projectKey)'>
         <div class="form-group mt-3 submit-project">
           <input type='text'
                 placeholder='Add a todo title title'
@@ -41,13 +41,14 @@
           {{project.title}}
           <ul>
             <li v-for="todo in project.todos" :key='todo._id'>
+              <button v-on:click="deleteTodo(todo._id,project._id)">X</button>
               <h4>{{todo.title}}</h4>
               <p>{{todo.description}}</p>
               <p>{{todo.state}}</p>
-              <p>{{todo._id}}</p>
+              <p>{{todo.priority}}</p>
             </li>
           </ul>
-          <button>Add Todo</button>          
+          <button v-on:click="projectKeyChanger(project._id)">Add Todo</button>          
         </li>
       </ul>
       <!-- End of the projects rendering -->
@@ -68,7 +69,8 @@ export default {
       button_toggle: {
         proj_attr: true,
         todo_attr: true
-      } //attribut to toggle the add project modal
+      }, //attribut to toggle the add project modal
+      projectKey: '' //holds the key for the project in which you insert the todo
     }
   },
   mounted(){
@@ -98,7 +100,11 @@ export default {
         alert('You need a todo title')
       }
     },
-    toggleProjectModal(attr){
+    async deleteTodo(todoId,projectId){
+      await ToDoAPI.deleteTodoInProject(todoId,projectId);
+      this.getProjects();
+    },
+    toggleAddModal(attr){
       const project = document.getElementById('project-modal');
       if (attr == 'block') {
         project.style.display = 'block'
@@ -106,7 +112,11 @@ export default {
       }else if(attr == 'none') {
         project.style.display = 'none'
         this.button_toggle.proj_attr = true
-      };
+      }
+    },
+    projectKeyChanger(key){
+      this.projectKey = key;
+      console.log(key)
     }
   }
 }
@@ -144,5 +154,9 @@ export default {
   border: 2px black solid;
   margin: 5px;
   width: 300px;
+}
+
+.add-todo-modal{
+  display: none;
 }
 </style>
