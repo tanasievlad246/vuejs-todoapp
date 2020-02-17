@@ -1,22 +1,18 @@
-A small todo app project 
+# A simple todo app with the MEVN stack
 
-run npm start && npm start in the client folder
-run npm start && npm start in the server folder
+## This app uses mongoDB as a database
 
+### Usage
 
-This app uses mongo atlas as a database
+- Craete a collection witht he name of "todos" for the stand alone todo page and one named "projects" for the projects section (currently still working on it)
+- In server/app.js on line 9 connect to your database url and enter your database name at the end of the link "mongodb://127.0.0.1/your_db_name"
+- run npm install && npm start in the client folder
+- run npm install && npm start in the server folder
 
-The app runs on localhost:8080
-The api runs on localhost:8081
+**_The app runs on localhost:8080_**
+**_The api runs on localhost:8081_**
 
-Created the client folder and initialized vue js with webpack
-Created the server folder and initizlied node in it
-Added nodemon to the server folder
-Added express, body-parser, morgan and cors to the server folder
-Added axios for the communication between front-end and back-end
-Created the main component for the front end
-Created the routes in express and tested it with postman
-Added a get function to get the data from the db in the services/ToDoAPI.js file
-Rendered the data from the db as a list in ToDo.vue
-Added the route functions to send data to the db in the services/ToDoAPI.js file and ToDo.vue
-Added some styles with Bootstrap and css
+### Features
+
+- A simple list of todos with crud functionality on the main page
+- A projects section where you can add projects and inside them you can add edit and elete todos
