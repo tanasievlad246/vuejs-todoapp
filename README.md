@@ -4,7 +4,7 @@
 
 ### Usage
 
-- Craete a collection witht he name of "todos" for the stand alone todo page and one named "projects" for the projects section (currently still working on it)
+- Craete a collection witht he name of "todos" for the stand alone todo page and one named "projects" for the projects section
 - In server/app.js on line 9 connect to your database url and enter your database name at the end of the link "mongodb://127.0.0.1/your_db_name"
 - run npm install && npm start in the client folder
 - run npm install && npm start in the server folder

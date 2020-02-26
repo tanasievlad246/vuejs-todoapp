@@ -14,8 +14,13 @@ var db = mongoose.connection;
 //Bind connection to error event (to get notification of connection errors)
 db.on("error", console.error.bind(console, "MongoDB connection error:"));
 
+/**
+ *
+ * MongoDB Atlas connection options below
+ *
+ */
+
 /*
-//mongodb connection for atlas
 const mongo = require('mongodb');
 const MongoClient = mongo.MongoClient;
 const uri = "mongodb+srv://dbappuser1:zxcvbnm1@cluster0-gahmk.mongodb.net/todoapp?retryWrites=true";
@@ -66,27 +71,21 @@ app.post("/addTodo", (req, res) => {
   let todo = req.body.todo; //parse the data from the request body
   let description = req.body.description;
   let state = req.body.state;
-  collection.insertOne(
-    { title: todo, description: description, state: state },
-    function(err, results) {
-      if (err) {
-        console.log(err);
-        res.send("");
-        return;
-      }
-      res.send(results.ops[0]); //retruns the new document
+  collection.insertOne({ title: todo, description: description, state: state }, function(err, results) {
+    if (err) {
+      console.log(err);
+      res.send("");
+      return;
     }
-  );
+    res.send(results.ops[0]); //retruns the new document
+  });
 });
 
 //delete a todo (DELETE)
 app.post("/deleteTodo", (req, res) => {
   const collection = db.collection("todos");
   // remove the document by the unique id
-  collection.deleteOne({ _id: mongo.ObjectId(req.body.todoID) }, function(
-    err,
-    results
-  ) {
+  collection.deleteOne({ _id: mongo.ObjectId(req.body.todoID) }, function(err, results) {
     if (err) {
       console.log(err);
       res.send();
@@ -109,18 +108,14 @@ app.post("/updateTodo", (req, res) => {
   if (description) updateOperation.description = description;
   if (state) updateOperation.state = state;
 
-  collection.update(
-    { _id: mongo.ObjectId(req.body.todoID) },
-    { $set: { ...updateOperation } },
-    function(err, results) {
-      if (err) {
-        console.log(err);
-        res.send("");
-        return;
-      }
-      res.send();
+  collection.update({ _id: mongo.ObjectId(req.body.todoID) }, { $set: { ...updateOperation } }, function(err, results) {
+    if (err) {
+      console.log(err);
+      res.send("");
+      return;
     }
-  );
+    res.send();
+  });
 });
 
 //change the state from active to complete
@@ -129,31 +124,26 @@ app.post("/changeState", (req, res) => {
   let state = req.body.state;
 
   if (state === "active") {
-    collection.update(
-      { _id: mongo.ObjectID(req.body.todoID) },
-      { $set: { state: "complete" } },
-      function(err, results) {
-        if (err) {
-          console.log(err);
-          res.send("");
-          return;
-        }
-        res.send();
+    collection.update({ _id: mongo.ObjectID(req.body.todoID) }, { $set: { state: "complete" } }, function(
+      err,
+      results
+    ) {
+      if (err) {
+        console.log(err);
+        res.send("");
+        return;
       }
-    );
+      res.send();
+    });
   } else {
-    collection.update(
-      { _id: mongo.ObjectID(req.body.todoID) },
-      { $set: { state: "active" } },
-      function(err, results) {
-        if (err) {
-          console.log(err);
-          res.send("");
-          return;
-        }
-        res.send();
+    collection.update({ _id: mongo.ObjectID(req.body.todoID) }, { $set: { state: "active" } }, function(err, results) {
+      if (err) {
+        console.log(err);
+        res.send("");
+        return;
       }
-    );
+      res.send();
+    });
   }
 });
 
@@ -322,10 +312,7 @@ app.post("/deleteTodoInProject/:id", (req, res) => {
 app.delete("/deleteProject/:id", (req, res) => {
   const collection = db.collection("projects");
   // remove the document by the unique id
-  collection.deleteOne({ _id: mongo.ObjectId(req.params.id) }, function(
-    err,
-    results
-  ) {
+  collection.deleteOne({ _id: mongo.ObjectId(req.params.id) }, function(err, results) {
     if (err) {
       console.log(err);
       res.send("");
@@ -333,6 +320,17 @@ app.delete("/deleteProject/:id", (req, res) => {
     }
     res.send(results);
   });
+});
+
+// update project todo list when drag and drop
+app.post("/updateProjectOnDrop", (req, res) => {
+  const collection = db.collection("projects");
+  collection.updateOne(
+    { _id: mongo.ObjectId(req.params.id) },
+    {
+      $set: { todos: req.body.todos }
+    }
+  );
 });
 
 //the server

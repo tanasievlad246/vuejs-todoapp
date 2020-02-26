@@ -26,7 +26,12 @@
           type="submit"
           class="btn btn-success btn-block mt-2"
           value="Create Project"
-          v-on:click="toggleProjectModal('none')"
+          style="
+            button_toggle.proj_attr == false
+              ? 'display: none'
+              : 'display: blcok'
+          "
+          v-on:click="button_toggle.proj_attr = false"
         />
       </div>
     </form>
@@ -119,64 +124,74 @@
     <!-- End of edit todo modal -->
 
     <!-- Start of the projects rendering -->
-    <ul>
+    <ul class="row">
       <li v-for="project in projects" :key="project._id" class="project-pannel">
-        {{ project.title }}
-        <ul>
-          <li v-for="todo in project.todos" :key="todo._id">
-            <button v-on:click="deleteTodo(todo._id, project._id)">X</button>
-            <button
-              v-on:click="
-                toggleEditModal('block');
-                updateTodoDelegate(project._id, todo._id, todo);
-              "
+        <div v-model="project.todos" :key="project._id">
+          {{ project.title }}
+          <ul>
+            <draggable
+              v-model="todos"
+              @start="drag = true"
+              @end="updateProjectDrop(project._id, project.todos)"
             >
-              Edit
-            </button>
-            <button
-              v-if="todo.state == 'complete'"
-              v-on:click="changeState(project._id, todo._id, todo.state)"
-            >
-              Activate
-            </button>
-            <button
-              v-if="todo.state == 'active'"
-              v-on:click="changeState(project._id, todo._id, todo.state)"
-            >
-              Complete
-            </button>
-            <h4
-              :style="
-                todo.state === 'complete'
-                  ? 'text-decoration: line-through;'
-                  : 'text-decoration: none;'
-              "
-              class="mt-1 lead text-break"
-            >
-              {{ todo.title }}
-            </h4>
-            <p
-              :style="
-                todo.state === 'complete'
-                  ? 'text-decoration: line-through;'
-                  : 'text-decoration: none;'
-              "
-              class="mt-1 lead text-break"
-            >
-              {{ todo.description }}
-            </p>
-            <p>{{ todo.priority }}</p>
-          </li>
-        </ul>
-        <button
-          v-on:click="
-            projectKeyChanger(project._id);
-            toggleAddModal('block');
-          "
-        >
-          Add Todo
-        </button>
-        <button v-on:click="deleteProject(project._id)">Delete</button>
+              <li v-for="todo in project.todos" :key="todo._id">
+                <button v-on:click="deleteTodo(todo._id, project._id)">
+                  X
+                </button>
+                <button
+                  v-on:click="
+                    toggleEditModal('block');
+                    updateTodoDelegate(project._id, todo._id, todo);
+                  "
+                >
+                  Edit
+                </button>
+                <button
+                  v-if="todo.state == 'complete'"
+                  v-on:click="changeState(project._id, todo._id, todo.state)"
+                >
+                  Activate
+                </button>
+                <button
+                  v-if="todo.state == 'active'"
+                  v-on:click="changeState(project._id, todo._id, todo.state)"
+                >
+                  Complete
+                </button>
+                <h4
+                  :style="
+                    todo.state === 'complete'
+                      ? 'text-decoration: line-through;'
+                      : 'text-decoration: none;'
+                  "
+                  class="mt-1 lead text-break"
+                >
+                  {{ todo.title }}
+                </h4>
+                <p
+                  :style="
+                    todo.state === 'complete'
+                      ? 'text-decoration: line-through;'
+                      : 'text-decoration: none;'
+                  "
+                  class="mt-1 lead text-break"
+                >
+                  {{ todo.description }}
+                </p>
+                <p>{{ todo.priority }}</p>
+              </li>
+            </draggable>
+          </ul>
+          <button
+            v-on:click="
+              projectKeyChanger(project._id);
+              toggleAddModal('block');
+            "
+          >
+            Add Todo
+          </button>
+          <button v-on:click="deleteProject(project._id)">Delete</button>
+        </div>
       </li>
     </ul>
     <!-- End of the projects rendering -->
@@ -184,8 +199,12 @@
 </template>
 <script>
 import ToDoAPI from "@/services/ToDoAPI.js";
+import draggable from "vuedraggable";
 
 export default {
+  components: {
+    draggable
+  },
   data() {
     return {
       projectTitle: "",
@@ -279,6 +298,9 @@ export default {
       await ToDoAPI.changeTodoState(projectId, todoId, update);
       this.getProjects();
     },
+    async updateProjectDrop(projectId, todosList) {
+      console.log("Drop works", projectId, todosList);
+    },
     toggleAddModal(attr) {
       const add = document.getElementById("todo-modal");
       if (attr == "block") {
@@ -313,12 +335,6 @@ export default {
       this.projectKey = key;
     },
     updateTodoDelegate(projectId, todoId, todoObject) {
-      // updateObject: {
-      //   projectId: "",
-      //   todoId: "",
-      //   todo: ""
-      // }
-
       this.updateObject.projectId = projectId;
       this.updateObject.todoId = todoId;
       this.updateObject.todo = todoObject;
@@ -330,8 +346,8 @@ export default {
 </script>
 
 <style lang="css">
-.striketrough {
-  text-decoration: line-through;
+ul {
+  list-style: none;
 }
 
 .submit-project {
