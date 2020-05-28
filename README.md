@@ -15,4 +15,6 @@
 ### Features
 
 - A simple list of todos with crud functionality on the main page
-- A projects section where you can add projects and inside them you can add edit and elete todos
+- A projects section where you can add projects and inside them you can add edit and delete todos
+
+The app does not have any styels as of now
